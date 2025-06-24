@@ -1,0 +1,56 @@
+{
+  "unstable": [
+    "unsafe-proto",
+    "sloppy-imports"
+  ],
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext",
+      "dom.asynciterable",
+      "webworker",
+      "webworker.importscripts"
+    ],
+    "strict": true,
+    "jsx": "preserve"
+  },
+  "imports": {
+    "@/": "./"
+  },
+  "fmt": {
+    "include": [
+      "app/",
+      "components/",
+      "lib/"
+    ],
+    "exclude": [  ],
+    "lineWidth": 80,
+    "indentWidth": 2,
+    "singleQuote": true,
+    "semiColons": true
+  },
+  "lint": {
+    "include": [
+      "app/",
+      "components/",
+      "lib/"
+    ],
+    "rules": {
+      "tags": [
+        "recommended"
+      ],
+      "include": [
+        "ban-untagged-todo"
+      ],
+      "exclude": [
+        "no-undef",
+        "no-sloppy-imports",
+        "require-await",
+        "no-explicit-any",
+        "no-node-globals",
+        "no-process-global"
+      ]
+    }
+  }
+}
