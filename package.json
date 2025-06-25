@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
-    "build-obfuscate": "next build && next-css-obfuscator",
     "start": "next start",
     "lint": "next lint"
   },
@@ -25,9 +24,11 @@
     "@wordpress/block-serialization-default-parser": "^5.9.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^16.5.0",
     "lucide-react": "^0.517.0",
     "next": "^15.3.4",
     "next-themes": "^0.4.6",
+    "node-fetch": "^3.3.2",
     "query-string": "^9.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",

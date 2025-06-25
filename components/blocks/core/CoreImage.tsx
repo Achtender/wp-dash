@@ -4,16 +4,12 @@ import Image from 'next/image';
 import { RenderBlock } from '@/components/craft-blocks';
 
 const CoreImage = (self: RenderBlock) => {
-  // const media_placeholder = self.ctx?.media_placeholder;
-  const media = (self.ctx?.media as any | undefined)?.media_details;
+  const media_json = (self.ctx?.media as any | undefined);
+  const media =media_json?.media_details;
 
   if (!media) return null;
 
-  // Pick the best available size as fallback
-  const src = media.sizes?.large?.source_url ||
-    // media.sizes?.medium_large?.source_url ||
-    media.sizes?.medium?.source_url ||
-    media.sizes?.full?.source_url;
+  const src = `/assets/${media_json.id}.gen.${media_json.source_url.split('.').pop()}`;
 
   // Optionally, you can set width/height for layout
   const width = media.sizes?.large?.width || media.width;
@@ -28,12 +24,7 @@ const CoreImage = (self: RenderBlock) => {
       sizes='(min-width: 1024px) 800px, (min-width: 600px) 400px, 100vw'
       className='flex-1 h-auto object-cover'
       style={{ aspectRatio: self.attrs.aspectRatio }}
-      // {...(media_placeholder
-      //   ? {
-      //     placeholder: 'blur',
-      //     blurDataURL: media_placeholder?.blurDataURL,
-      //   }
-      //   : {})}
+     
     />
   );
 };

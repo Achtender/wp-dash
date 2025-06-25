@@ -21,6 +21,7 @@
 
 # production
 /build
+/public/**/*.gen*
 
 # misc
 .DS_Store
