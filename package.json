@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "next build",
+    "build": "npm run build-preload && next build",
+    "build-preload": "node webpack.asset-preload.mjs",
     "start": "next start",
     "lint": "next lint"
   },

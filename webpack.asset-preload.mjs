@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import fetch from 'node-fetch';
 
-dotenv.config();
+dotenv.config({ path: '.env.local' });
 
 const baseUrl = process.env.WORDPRESS_URL;
 

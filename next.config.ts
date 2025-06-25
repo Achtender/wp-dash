@@ -1,13 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      require('./webpack.asset-preload.js');
-    }
-
-    return config;
-  },
   devIndicators: false,
   env: {
     WORDPRESS_URL: process.env.WORDPRESS_URL,
