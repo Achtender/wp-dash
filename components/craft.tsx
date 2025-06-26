@@ -4,11 +4,14 @@
 import React from 'react';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-
 import * as blockSerialization from '@wordpress/block-serialization-default-parser';
 
-import { nextBlock, resolveBlock } from './craft-blocks';
-import type { RenderBlock } from './craft-blocks';
+import type { Page, Post } from '@/lib/wordpress.d.ts';
+import type { RenderBlock } from '@/components/craft-blocks';
+
+import { nextBlock, resolveBlock } from '@/components/craft-blocks';
+import { LayoutContextWrapper } from '@/components/utils/client-contexts';
+import { getTemplate } from '@/lib/wordpress.ts';
 
 // Utility function to merge class names
 export function cn(...inputs: ClassValue[]) {
@@ -192,9 +195,10 @@ export const styles = {
     // xl: 'xl',
     // '2xl': '2xl',
 
-
-    restraint: 'mx-auto px-4 md:px-[1.5rem] lg:px-[2rem] max-w-[40rem] md:max-w-[48rem] lg:max-w-[64rem]',
-    container: 'mx-auto px-4 md:px-[1.5rem] lg:px-[2rem] max-w-[40rem] md:max-w-[48rem] lg:max-w-[64rem]',
+    restraint:
+      'mx-auto px-4 md:px-[1.5rem] lg:px-[2rem] max-w-[40rem] md:max-w-[48rem] lg:max-w-[64rem]',
+    container:
+      'mx-auto px-4 md:px-[1.5rem] lg:px-[2rem] max-w-[40rem] md:max-w-[48rem] lg:max-w-[64rem]',
     // @media (min-width: 40rem) padding-inline: 1rem; width: 100%;
     // @media (min-width: 40rem) padding-inline: 1.5rem; max-width: 40rem;
     // @media (min-width: 48rem) padding-inline: 1.5rem; max-width: 48rem;
@@ -206,7 +210,8 @@ export const styles = {
     section: 'py-8 md:py-10',
   },
   dev: {
-    grid_overlay: 'before:grid before:grid-cols-5 before:content-[""] before:absolute before:inset-full',
+    grid_overlay:
+      'before:grid before:grid-cols-5 before:content-[""] before:absolute before:inset-full',
   },
 };
 
@@ -250,7 +255,10 @@ export const Section = ({ children, className, id }: BaseProps) => (
 );
 
 export const Container = ({ children, className, id }: BaseProps) => (
-  <div className={cn(styles.layout.container, styles.dev.grid_overlay, className)} id={id}>
+  <div
+    className={cn(styles.layout.container, styles.dev.grid_overlay, className)}
+    id={id}
+  >
     {children}
   </div>
 );
@@ -286,24 +294,49 @@ export const Prose = ({
     {children}
   </Main>
 );
-export const Block = async (
-  { dangerouslySetInnerHTML }: BaseProps & HTMLProps,
+
+// Keep this as Server Component
+export const SliceLayout = async (
+  { post, children }: {
+    post?: Post | Page;
+    children?: React.ReactNode;
+  },
 ) => {
-  return <>{await parseBlock(dangerouslySetInnerHTML?.__html)}</>;
+  const template = await getTemplate(post?.template ?? '');
+  const parsedContent = await parseBlock(template.content.raw);
+  const parsedInset = children ?? post
+    ? await parseBlock(post!.content.raw)
+    : undefined;
+
+  return (
+    <LayoutContextWrapper post={post} inset={parsedInset}>
+      {parsedContent}
+    </LayoutContextWrapper>
+  );
 };
 
 async function parseBlock(html?: string) {
-  const reactElement = blockSerialization.parse(html || '');
+  if (!html) {
+    return <div>No content to parse</div>;
+  }
+
+  const reactElement = blockSerialization.parse(html);
 
   const blockMap = await Promise.all(
-    reactElement //
+    reactElement
       .filter((_) => _.blockName)
-      .map((_) => resolveBlock(_)),
+      .map(async (_) => {
+        const resolved = await resolveBlock(_);
+        return resolved;
+      }),
   );
 
   return (
     <>
-      {blockMap.map((block, k) => nextBlock(block as RenderBlock, k))}
+      {blockMap.map((block, k) => {
+        const renderedBlock = nextBlock(block as RenderBlock, k);
+        return renderedBlock;
+      })}
     </>
   );
 }

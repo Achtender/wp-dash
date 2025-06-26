@@ -1,4 +1,13 @@
 // Common types that are reused across multiple entities
+type Template = { slug: string; content: { raw: string } };
+
+type Block = {
+  id: number;
+  slug: string;
+  title: { raw: string };
+  content: { raw: string };
+};
+
 interface WPEntity {
   id: number;
   date: string;

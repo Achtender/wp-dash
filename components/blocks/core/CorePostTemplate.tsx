@@ -30,7 +30,7 @@ const CorePostTemplate = (self: RenderBlock) => {
     return (
       <ScopeContext.Provider
         key={k}
-        value={{ scope: post, setScope: () => {} }}
+        value={{ scope: post }}
       >
         <CoreGroup {...post_wrap} />
       </ScopeContext.Provider>

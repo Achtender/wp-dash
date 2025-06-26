@@ -17,6 +17,7 @@ import CoreColumn from '@/components/blocks/core/CoreColumn';
 import CoreColumns from '@/components/blocks/core/CoreColumns';
 import CoreQuery from '@/components/blocks/core/CoreQuery';
 import CoreQueryNoResults from '@/components/blocks/core/CoreQueryNoResults';
+import CorePostContent from '@/components/blocks/core/CorePostContent';
 import CorePostTemplate from '@/components/blocks/core/CorePostTemplate';
 import CorePostFeaturedImage from '@/components/blocks/core/CorePostFeaturedImage';
 // import CorePostTitle from '@/components/blocks/core/CorePostTitle';
@@ -37,6 +38,7 @@ export const library = {
   'core/columns': CoreColumns,
   'core/query': CoreQuery,
   'core/query-no-results': CoreQueryNoResults,
+  'core/post-content': CorePostContent,
   'core/post-template': CorePostTemplate,
   // 'core/post-title': CorePostTitle,
   'core/post-featured-image': CorePostFeaturedImage,

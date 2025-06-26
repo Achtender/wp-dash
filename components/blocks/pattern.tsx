@@ -2,7 +2,7 @@ import { RenderBlock } from '@/components/craft-blocks';
 // import { getUrl, wordpressFetch } from '@/lib/wordpress';
 
 export const map: Record<string, string> = {
-  'header': `slice/default-header`
+  'header': `slice/default-header`,
 };
 
 export const library = {

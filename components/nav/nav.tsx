@@ -14,13 +14,17 @@ import { MobileNav } from '@/components/nav/mobile-nav';
 import { SearchNav } from '@/components/nav/search-nav';
 import { styles } from '@/components/craft';
 
-
 export const Nav = ({ id }: NavProps) => {
   return (
     // <nav id={id} className='sticky z-50 top-0 md:top-0 border-b bg-background'>
     <nav id={id} className='sticky z-50 top-0 md:top-0 bg-background'>
       {/* <div className='max-w-6xl mx-auto py-4 px-6 sm:px-8 flex justify-between items-center'> */}
-      <div className={['flex justify-between items-center h-[4.375rem]', styles.layout.restraint].join(' ')}>
+      <div
+        className={[
+          'flex justify-between items-center h-[4.375rem]',
+          styles.layout.restraint,
+        ].join(' ')}
+      >
         {/* Left actions */}
         <Link
           className='hover:opacity-75 transition-all flex gap-4 items-center'

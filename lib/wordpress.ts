@@ -5,11 +5,13 @@
 import querystring from 'query-string';
 import type {
   Author,
+  Block,
   Category,
   FeaturedMedia,
   Page,
   Post,
   Tag,
+  Template,
 } from './wordpress.d';
 const baseUrl = process.env.WORDPRESS_URL;
 
@@ -70,6 +72,40 @@ export async function getSettings(): Promise<{ page_on_front: number }> {
   const url = getUrl('/wp-json/wp/v2/settings');
   const response = await wordpressFetch<{ page_on_front: number }>(url);
   return response;
+}
+
+export async function getTemplate(slug: string): Promise<Template> {
+  const url = getUrl('/wp-json/wp/v2/templates');
+  const response = await wordpressFetch<Template[]>(url);
+
+  const item = response.find((item) => item.slug === slug);
+  return item ?? response.find((item) => item.slug === 'page')!;
+}
+
+export async function getBreadcrumbsBySlug(slug: string) {
+  const settings = await getSettings();
+  const page = await getPageBySlug(slug) as Page | undefined;
+
+  if (!page) {
+    return [] as Page[];
+  }
+
+  const page_breadcrumbs: Page[] = [page];
+  let depth = 0;
+
+  while (page_breadcrumbs[0].parent && depth < 10) {
+    if (page_breadcrumbs[0].id == page_breadcrumbs[0].parent) break;
+
+    if (page_breadcrumbs[0].parent === settings.page_on_front) {
+      // skip homepage
+      break;
+    }
+
+    page_breadcrumbs.unshift(await getPageById(page_breadcrumbs[0].parent));
+    depth++;
+  }
+
+  return page_breadcrumbs;
 }
 
 export async function getAllPosts(filterParams?: {
@@ -266,6 +302,8 @@ export async function getTagBySlug(slug: string): Promise<Tag> {
 }
 
 export async function getAllPages(): Promise<Page[]> {
+  // TODO(@all): This may hit a limit where it will not be able to fetch all pages in one request
+
   const url = getUrl('/wp-json/wp/v2/pages');
   return wordpressFetch<Page[]>(url);
 }
@@ -328,13 +366,6 @@ export async function getFeaturedMediaById(id: number): Promise<FeaturedMedia> {
   const url = getUrl(`/wp-json/wp/v2/media/${id}`);
   return wordpressFetch<FeaturedMedia>(url);
 }
-
-type Block = {
-  id: number,
-  slug: string,
-  title: { raw: string }
-  content: { raw: string };
-};
 
 export async function getBlocksByRef(ref: number): Promise<Block> {
   const url = getUrl(`/wp-json/wp/v2/blocks/${ref}`);

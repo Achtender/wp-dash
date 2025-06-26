@@ -20,7 +20,7 @@ type BlockLibrary = {
 
 const library: {
   resolve: (self: RenderBlock) => Promise<RenderBlock>;
-  library: BlockLibrary  ;
+  library: BlockLibrary;
 }[] = [
   { resolve: resolvePlugin, library: library_plugin }, //
   { resolve: resolveCore, library: library_core },
