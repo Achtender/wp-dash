@@ -31,6 +31,12 @@ let media = [];
   for (const k in media) {
     const src_url = media[k].source_url;
     const local_url = `./public/assets/${media[k].id}.gen.${src_url.split('.').pop()}`;
+
+    if (fs.existsSync(local_url)) {
+      // Skip fetch for already downloaded files
+      continue;
+    }
+
     const response = await fetch(src_url);
 
     if (!response.ok) {
