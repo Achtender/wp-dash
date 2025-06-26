@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     WORDPRESS_WEBHOOK_SECRET: process.env.WORDPRESS_WEBHOOK_SECRET,
   },
   images: {
+    formats: ['image/avif'],
     remotePatterns: [
       {
         protocol: "https",
