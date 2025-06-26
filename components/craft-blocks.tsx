@@ -9,17 +9,22 @@ import {
   library as library_core,
   resolve as resolveCore,
 } from '@/components/blocks/core';
+import {
+  library as library_pattern,
+  resolve as resolvePattern,
+} from '@/components/blocks/pattern';
 
 type BlockLibrary = {
-  [blockName: string]: React.ComponentType<any>;
+  [blockName: string]: React.ComponentType<any> | null;
 };
 
 const library: {
   resolve: (self: RenderBlock) => Promise<RenderBlock>;
-  library: BlockLibrary;
+  library: BlockLibrary  ;
 }[] = [
   { resolve: resolvePlugin, library: library_plugin }, //
   { resolve: resolveCore, library: library_core },
+  { resolve: resolvePattern, library: library_pattern },
 ];
 
 export type ParsedBlock = blockSerialization.ParsedBlock;
@@ -102,6 +107,13 @@ export function nextBlock(
     const Component = blocks.library[self.blockName] as React.ComponentType<
       any
     >;
+
+    if (!Component) {
+      console.warn(
+        `Missing block "${self.blockName}", possibly given null value by block library or altered blockName during resolve to an unknown key`,
+      );
+      continue;
+    }
 
     const nested = self.innerBlocks && self.innerBlocks.length > 0
       ? self.innerBlocks?.filter((_) => _.blockName)?.map((_, k) =>

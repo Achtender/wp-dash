@@ -88,7 +88,7 @@ export interface BoxProps extends BaseProps {
 }
 
 // Style configurations
-const styles = {
+export const styles = {
   typography: {
     base: [
       'font-sans antialiased',
@@ -185,12 +185,28 @@ const styles = {
     ],
   },
   layout: {
+    // base: 'base',
+    // sm: 'sm',
+    // md: 'md',
+    // lg: 'lg',
+    // xl: 'xl',
+    // '2xl': '2xl',
+
+
+    restraint: 'mx-auto px-4 md:px-[1.5rem] lg:px-[2rem] max-w-[40rem] md:max-w-[48rem] lg:max-w-[64rem]',
+    container: 'mx-auto px-4 md:px-[1.5rem] lg:px-[2rem] max-w-[40rem] md:max-w-[48rem] lg:max-w-[64rem]',
+    // @media (min-width: 40rem) padding-inline: 1rem; width: 100%;
+    // @media (min-width: 40rem) padding-inline: 1.5rem; max-width: 40rem;
+    // @media (min-width: 48rem) padding-inline: 1.5rem; max-width: 48rem;
+    // @media (min-width: 64rem) padding-inline: 2rem; max-width: 64rem;
+
     spacing: '[&>*+*]:mt-6',
     article: 'max-w-prose',
-    container: 'max-w-6xl mx-auto p-4 sm:p-8',
-    // main: '',
-    main: 'py-0 lg:py-8',
+    main: '',
     section: 'py-8 md:py-10',
+  },
+  dev: {
+    grid_overlay: 'before:grid before:grid-cols-5 before:content-[""] before:absolute before:inset-full',
   },
 };
 
@@ -228,13 +244,13 @@ export const Main = ({ children, className, id }: BaseProps) => (
 );
 
 export const Section = ({ children, className, id }: BaseProps) => (
-  <section className={cn(styles.layout.main, className)} id={id}>
+  <section className={cn(className)} id={id}>
     {children}
   </section>
 );
 
 export const Container = ({ children, className, id }: BaseProps) => (
-  <div className={cn(styles.layout.container, className)} id={id}>
+  <div className={cn(styles.layout.container, styles.dev.grid_overlay, className)} id={id}>
     {children}
   </div>
 );
@@ -278,6 +294,7 @@ export const Block = async (
 
 async function parseBlock(html?: string) {
   const reactElement = blockSerialization.parse(html || '');
+
   const blockMap = await Promise.all(
     reactElement //
       .filter((_) => _.blockName)

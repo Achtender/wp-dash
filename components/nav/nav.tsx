@@ -12,12 +12,15 @@ import Link from 'next/link';
 // import { Search } from 'lucide-react';
 import { MobileNav } from '@/components/nav/mobile-nav';
 import { SearchNav } from '@/components/nav/search-nav';
+import { styles } from '@/components/craft';
+
 
 export const Nav = ({ id }: NavProps) => {
   return (
-    <nav id={id} className='sticky z-50 top-0 md:top-0 border-b bg-background'>
+    // <nav id={id} className='sticky z-50 top-0 md:top-0 border-b bg-background'>
+    <nav id={id} className='sticky z-50 top-0 md:top-0 bg-background'>
       {/* <div className='max-w-6xl mx-auto py-4 px-6 sm:px-8 flex justify-between items-center'> */}
-      <div className='relative max-w-6xl mx-auto py-4 px-6 sm:px-8 flex justify-between items-center'>
+      <div className={['flex justify-between items-center h-[4.375rem]', styles.layout.restraint].join(' ')}>
         {/* Left actions */}
         <Link
           className='hover:opacity-75 transition-all flex gap-4 items-center'
@@ -36,7 +39,7 @@ export const Nav = ({ id }: NavProps) => {
         </Link>
 
         {/* Center navigation */}
-        <nav className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'>
+        <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'>
           {
             /* <ul className='flex gap-6'>
             <li>
@@ -59,7 +62,7 @@ export const Nav = ({ id }: NavProps) => {
               </li>
             ))}
           </ul>
-        </nav>
+        </div>
 
         {/* Right actions */}
         <div className='flex items-center gap-2'>

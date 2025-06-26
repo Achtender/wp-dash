@@ -329,6 +329,18 @@ export async function getFeaturedMediaById(id: number): Promise<FeaturedMedia> {
   return wordpressFetch<FeaturedMedia>(url);
 }
 
+type Block = {
+  id: number,
+  slug: string,
+  title: { raw: string }
+  content: { raw: string };
+};
+
+export async function getBlocksByRef(ref: number): Promise<Block> {
+  const url = getUrl(`/wp-json/wp/v2/blocks/${ref}`);
+  return wordpressFetch<Block>(url);
+}
+
 export async function searchCategories(query: string): Promise<Category[]> {
   const url = getUrl('/wp-json/wp/v2/categories', {
     search: query,

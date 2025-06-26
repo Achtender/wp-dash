@@ -64,7 +64,7 @@ export function SearchNav(
         variant='ghost'
         className='px-0  w-10 text-base focus-visible:bg-transparent focus-visible:ring-offset-0'
         onClick={() => {
-          globalThis.location.href = '/find';
+          globalThis.location.href = '/explore';
         }}
         aria-label='Open search'
         type='button'

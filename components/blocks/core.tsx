@@ -1,7 +1,9 @@
 import { RenderBlock } from '@/components/craft-blocks';
 import { getFeaturedMediaById, getQueryPosts } from '@/lib/wordpress';
+import { getBlocksByRef } from '@/lib/wordpress';
 
-// const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+import { map as pattern_map } from '@/components/blocks/pattern';
+import { resolve as pattern_resolve } from '@/components/blocks/pattern';
 
 import CoreImage from '@/components/blocks/core/CoreImage';
 import CoreGallery from '@/components/blocks/core/CoreGallery';
@@ -47,35 +49,36 @@ export const library = {
   'core/group': CoreGroup,
   'core/separator': CoreSeparator,
   'core/spacer': CoreSpacer,
+  'core/block': null, // `null` to allow resolve, but render nothing
 };
 
 export async function resolve(self: RenderBlock): Promise<RenderBlock> {
   switch (self.blockName) {
+    case 'core/block': {
+      const block_fetch = await getBlocksByRef(self.attrs.ref);
+
+      if (block_fetch.slug in pattern_map) {
+        // core/block as a pattern slice
+        self.ctx = { ...pattern_resolve(self) };
+        self.blockName = pattern_map[block_fetch.slug];
+      } else {
+        // core/block as a sync pattern
+
+        // ---
+        // TODO(@all): resolve non pattern core/block as core patterns
+        self.ctx = {
+          code: 'Caution',
+          message:
+            `The "${self.blockName}" block could not be matched with block library. You may leave it as-is, convert it to custom HTML, or remove it.`,
+        };
+        self.blockName = 'dev/warning';
+        // ---
+      }
+      break;
+    }
     case 'core/image': {
       const media = await getFeaturedMediaById(self.attrs.id);
-      // const media_placeholder = await (async () => {
-      //   const self_media = media?.media_details;
-      //   if (!self_media) return null;
-
-      //   const response = await fetch(
-      //     `${baseUrl}/api/og/blur?url=${
-      //       encodeURIComponent(self_media.sizes?.thumbnail?.source_url)
-      //     }`,
-      //   );
-      //   const arrayBuffer = await response.arrayBuffer();
-      //   const base64 = Buffer.from(arrayBuffer).toString('base64');
-      //   const mimeType = response.headers.get('content-type') || 'image/png';
-
-      //   return {
-      //     blurDataURL: `data:${mimeType};base64,${base64}`,
-      //   };
-      // })();
-
-      self.ctx = {
-        ...self.ctx,
-        media,
-        // media_placeholder,
-      };
+      self.ctx = { ...self.ctx, media };
       break;
     }
     case 'core/paragraph': {
