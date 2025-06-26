@@ -14,6 +14,6 @@ export const contentMenu = {
   articles: "/articles",
   // authors: "/posts/authors",
   // categories: "/posts/categories",
-  // sitemap: "/find",
+  // sitemap: "/explore",
   // tags: "/posts/tags",
 };

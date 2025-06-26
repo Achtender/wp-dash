@@ -40,7 +40,7 @@ export default async function Find({ searchParams }: {
       <Container>
         <Prose className='mb-5'>
           <h1>
-            <Balancer>Finder</Balancer>
+            <Balancer>Explore</Balancer>
           </h1>
           {/* <p></p> */}
         </Prose>
