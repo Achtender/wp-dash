@@ -26,6 +26,8 @@ const nextConfig: NextConfig = {
       //   destination: `${process.env.WORDPRESS_URL}/wp-admin`,
       //   permanent: true,
       // },
+      { source: "/rss", destination: `/rss.xml`, permanent: true, },
+      { source: "/feed", destination: `/rss.xml`, permanent: true, },
     ];
   },
 };
