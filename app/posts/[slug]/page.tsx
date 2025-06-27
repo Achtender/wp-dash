@@ -1,7 +1,7 @@
 import { getAllPosts, getAuthorById, getCategoryById } from '@/lib/wordpress';
 import { getFeaturedMediaById, getPostBySlug } from '@/lib/wordpress';
 import { notFound } from 'next/navigation';
-import { Article, Container, Prose, Section } from '@/components/craft';
+import { Article, Prose, SliceLayout } from '@/components/craft';
 import { dangerouslySetInnerWordPressRaw } from '@/components/craft-helpers';
 import { badgeVariants } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -11,13 +11,24 @@ import Link from 'next/link';
 import Balancer from 'react-wrap-balancer';
 
 import type { Metadata } from 'next';
+import { getAllPostTypes } from '@/lib/wordpress';
+
+export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const posts = await getAllPosts();
+  const post_types = await getAllPostTypes();
+  const routes: { slug: string }[] = [];
 
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
+  for (const k in post_types) {
+    const post_type = post_types[k];
+    const posts = await getAllPosts({ post_type: post_type.rest_base });
+
+    posts.map((post) => {
+      routes.push({ slug: post.slug });
+    });
+  }
+
+  return routes;
 }
 
 export async function generateMetadata({
@@ -95,53 +106,51 @@ export default async function Page({
     : undefined;
 
   return (
-    <Section>
-      <Container>
-        <Prose>
-          <h1>
-            <Balancer>
-              <span {...dangerouslySetInnerWordPressRaw(post.title.raw)}></span>
-            </Balancer>
-          </h1>
-          <div className='flex justify-between items-center gap-4 text-sm mb-4'>
-            <h5>
-              {author?.id && (
-                <>
-                  Published {date} by
-                  <span>
-                    {' '}
-                    <a href={`/posts/?author=${author.id}`}>{author.name}</a>
-                  </span>
-                </>
-              )}
-            </h5>
-
-            {category?.id && (
-              <Link
-                href={`/posts/?category=${category.id}`}
-                className={cn(
-                  badgeVariants({ variant: 'outline' }),
-                  '!no-underline',
-                )}
-              >
-                {category.name}
-              </Link>
+    <SliceLayout>
+      <Prose>
+        <h1>
+          <Balancer>
+            <span {...dangerouslySetInnerWordPressRaw(post.title.raw)}></span>
+          </Balancer>
+        </h1>
+        <div className='flex justify-between items-center gap-4 text-sm mb-4'>
+          <h5>
+            {author?.id && (
+              <>
+                Published {date} by
+                <span>
+                  {' '}
+                  <a href={`/posts/?author=${author.id}`}>{author.name}</a>
+                </span>
+              </>
             )}
-          </div>
-          {featuredMedia?.source_url && (
-            <div className='h-96 my-12 md:h-[500px] overflow-hidden flex items-center justify-center border rounded-lg bg-accent/25'>
-              {/* eslint-disable-next-line */}
-              <img
-                className='w-full h-full object-cover'
-                src={featuredMedia.source_url}
-                alt={post.title.raw}
-              />
-            </div>
-          )}
-        </Prose>
+          </h5>
 
-        <Article {...dangerouslySetInnerWordPressRaw(post.content.raw)} />
-      </Container>
-    </Section>
+          {category?.id && (
+            <Link
+              href={`/posts/?category=${category.id}`}
+              className={cn(
+                badgeVariants({ variant: 'outline' }),
+                '!no-underline',
+              )}
+            >
+              {category.name}
+            </Link>
+          )}
+        </div>
+        {featuredMedia?.source_url && (
+          <div className='h-96 my-12 md:h-[500px] overflow-hidden flex items-center justify-center border rounded-lg bg-accent/25'>
+            {/* eslint-disable-next-line */}
+            <img
+              className='w-full h-full object-cover'
+              src={featuredMedia.source_url}
+              alt={post.title.raw}
+            />
+          </div>
+        )}
+      </Prose>
+
+      <Article {...dangerouslySetInnerWordPressRaw(post.content.raw)} />
+    </SliceLayout>
   );
 }

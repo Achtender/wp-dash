@@ -74,8 +74,43 @@ export async function getSettings(): Promise<{ page_on_front: number }> {
   return response;
 }
 
+export async function getAllPostTypes(): Promise<{
+  has_archive: string | false;
+  slug: string;
+  rest_base: string;
+}[]> {
+  const url = getUrl('/wp-json/wp/v2/types');
+  const response = await wordpressFetch<{
+    has_archive: string | false;
+    slug: string;
+    rest_base: string;
+  }[]>(url);
+
+  const ref_post = await getAllPosts({ per_page: 1 });
+  const ref_link = ref_post?.[0]?.link ?? '/posts/no-posts';
+
+  const match = ref_link.match(/^(.*)\/[^/]+\/$/);
+  const post_slug = match ? match[1].replace(/^\/|\/$/g, '') : '';
+
+  return Object.values(response).filter((_) => (
+    !_.slug.startsWith('wp_') &&
+    !['attachment', 'nav_menu_item', 'page'].includes(_.slug)
+  )).map((_) => {
+    const post_type = { ..._ };
+    if (post_type.slug === 'post') _.slug = post_slug;
+    return _;
+  });
+}
+
 export async function getTemplate(slug: string): Promise<Template> {
   const url = getUrl('/wp-json/wp/v2/templates');
+  const response = await wordpressFetch<Template[]>(url);
+
+  const item = response.find((item) => item.slug === slug);
+  return item ?? response.find((item) => item.slug === 'page')!;
+}
+export async function getTemplatePart(slug: string): Promise<Template> {
+  const url = getUrl('/wp-json/wp/v2/template-parts');
   const response = await wordpressFetch<Template[]>(url);
 
   const item = response.find((item) => item.slug === slug);

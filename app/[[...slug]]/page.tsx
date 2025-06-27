@@ -1,6 +1,6 @@
 import { getAllPages, getPageById, getSettings } from '@/lib/wordpress';
-import { getBreadcrumbsBySlug, getTemplate } from '@/lib/wordpress';
-import { Container, Prose, Section, SliceLayout } from '@/components/craft';
+import { getBreadcrumbsBySlug } from '@/lib/wordpress';
+import { SliceLayout } from '@/components/craft';
 import { siteConfig } from '@/site.config';
 import { notFound } from 'next/navigation';
 

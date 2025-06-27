@@ -11,7 +11,7 @@ type WpConfig = {
 export const siteConfig: SiteConfig = {
   site_name: "Headless",
   site_description: "Starter template for Headless WordPress with Next.js",
-  site_domain: "https://wp-headless.deno.dev",
+  site_domain: "https://wp-dash.netlify.app",
 };
 
 

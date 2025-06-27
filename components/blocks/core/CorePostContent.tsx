@@ -3,12 +3,12 @@
 import { useContext } from 'react';
 import { RenderBlock } from '@/components/craft-blocks';
 
-import CoreGroup from '@/components/blocks/core/CoreGroup';
+// import CoreGroup from '@/components/blocks/core/CoreGroup';
 
-import { ScopeContext } from '@/components/utils/client-contexts';
+// import { ScopeContext } from '@/components/utils/client-contexts';
 import { InsetContext } from '@/components/utils/client-contexts';
 
-const CorePostTemplate = (self: RenderBlock) => {
+const CorePostTemplate = ({}: RenderBlock) => {
   // const { scope } = useContext(ScopeContext) ?? {};
   const { inset } = useContext(InsetContext) ?? {};
 
@@ -16,7 +16,11 @@ const CorePostTemplate = (self: RenderBlock) => {
   // console.log({ inset })
 
   if (inset) {
-    return inset;
+    return (
+      <InsetContext value={undefined}>
+        {inset}
+      </InsetContext>
+    );
   }
 
   // return <CoreGroup {...self} blockName='core/group'>

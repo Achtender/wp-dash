@@ -3,6 +3,6 @@ module.exports = {
   enable: true,
   mode: 'simplify', // random | simplify
   refreshClassConversionJson: true,
-  allowExtensions: ['.jsx', '.tsx', '.js', '.ts', '.html', '.rsc'],
+  allowExtensions: ['.jsx', '.tsx', '.js', '', '.html', '.rsc'],
   blackListedFolderPaths: ['./.next/cache', /\.next\/server\/pages\/api/],
 };

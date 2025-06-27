@@ -1,6 +1,7 @@
-import { RenderBlock } from '@/components/craft-blocks';
+import { RenderBlock, resolveBlock } from '@/components/craft-blocks';
 import { getFeaturedMediaById, getQueryPosts } from '@/lib/wordpress';
-import { getBlocksByRef } from '@/lib/wordpress';
+import { getBlocksByRef, getTemplatePart } from '@/lib/wordpress';
+import * as blockSerialization from '@wordpress/block-serialization-default-parser';
 
 import { map as pattern_map } from '@/components/blocks/pattern';
 import { resolve as pattern_resolve } from '@/components/blocks/pattern';
@@ -26,6 +27,7 @@ import CoreQueryPagination from '@/components/blocks/core/CoreQueryPagination';
 import CoreQueryPaginationPrevious from '@/components/blocks/core/CoreQueryPaginationPrevious';
 import CoreQueryPaginationNext from '@/components/blocks/core/CoreQueryPaginationNext';
 import CoreQueryPaginationNumbers from '@/components/blocks/core/CoreQueryPaginationNumbers';
+import CoreTemplatePart from '@/components/blocks/core/CoreTemplatePart';
 
 export const library = {
   'core/query-pagination': CoreQueryPagination,
@@ -52,10 +54,29 @@ export const library = {
   'core/separator': CoreSeparator,
   'core/spacer': CoreSpacer,
   'core/block': null, // `null` to allow resolve, but render nothing
+  'core/template-part': CoreTemplatePart,
 };
 
 export async function resolve(self: RenderBlock): Promise<RenderBlock> {
   switch (self.blockName) {
+    case 'core/template-part': {
+      const template_part = await getTemplatePart(self.attrs.slug);
+      const reactElement = await blockSerialization.parse(
+        template_part.content.raw,
+      );
+
+      const blockMap = (await Promise.all(
+        reactElement
+          .filter((_) => _.blockName)
+          .map(async (_) => {
+            const resolved = await resolveBlock(_);
+            return resolved;
+          }),
+      )).filter((_) => _ !== null);
+
+      self.innerBlocks = blockMap;
+      break;
+    }
     case 'core/block': {
       const block_fetch = await getBlocksByRef(self.attrs.ref);
 

@@ -6,12 +6,12 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import * as blockSerialization from '@wordpress/block-serialization-default-parser';
 
-import type { Page, Post } from '@/lib/wordpress.d.ts';
+import type { Page, Post } from '@/lib/wordpress.d';
 import type { RenderBlock } from '@/components/craft-blocks';
 
 import { nextBlock, resolveBlock } from '@/components/craft-blocks';
 import { LayoutContextWrapper } from '@/components/utils/client-contexts';
-import { getTemplate } from '@/lib/wordpress.ts';
+import { getTemplate } from '@/lib/wordpress';
 
 // Utility function to merge class names
 export function cn(...inputs: ClassValue[]) {
@@ -304,7 +304,9 @@ export const SliceLayout = async (
 ) => {
   const template = await getTemplate(post?.template ?? '');
   const parsedContent = await parseBlock(template.content.raw);
-  const parsedInset = children ?? post
+  const parsedInset = children
+    ? children
+    : post
     ? await parseBlock(post!.content.raw)
     : undefined;
 
